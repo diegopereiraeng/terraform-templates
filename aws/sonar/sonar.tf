@@ -8,6 +8,13 @@ variable "ami_id" {
   default     = "ami-0d887a308369b6881"
 }
 
+variable "keypair_id" {
+  description = "The Key Pair ID for the EC2 instance"
+  type        = string
+}
+
+
+
 resource "aws_security_group" "sonarqube_sg" {
   name        = "sonarqube-sg"
   description = "Security Group for SonarQube"
@@ -38,7 +45,7 @@ resource "aws_instance" "sonarqube_instance" {
   ami           = var.ami_id
   instance_type = "t2.medium"
 
-  key_name = "diego-aws" 
+  key_name = var.keypair_id
   security_groups = [aws_security_group.sonarqube_sg.name]
 
   tags = {
