@@ -57,10 +57,15 @@ resource "aws_instance" "sonarqube_instance" {
   user_data = <<-EOF
               #!/bin/bash
               sudo yum update -y
-              sudo yum install -y java-11-openjdk-devel wget unzip
+              sudo yum install -y wget unzip
+              sudo amazon-linux-extras enable corretto8
+              sudo yum install java-11-amazon-corretto.x86_64 -y
+              sudo ln -sf /usr/lib/jvm/java-11-amazon-corretto.x86_64/bin/java /usr/bin/java
+              export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto.x86_64
               wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.2.1.78527.zip
               unzip sonarqube-10.2.1.78527.zip
               sudo mv sonarqube-10.2.1.78527 /opt/sonarqube
+              sudo chown -R ec2-user:ec2-user /opt/sonarqube
               echo '[Unit]' | sudo tee /etc/systemd/system/sonarqube.service
               echo 'Description=SonarQube service' | sudo tee -a /etc/systemd/system/sonarqube.service
               echo 'After=syslog.target network.target' | sudo tee -a /etc/systemd/system/sonarqube.service
