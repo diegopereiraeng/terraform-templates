@@ -54,31 +54,30 @@ resource "aws_instance" "sonarqube_instance" {
     created_by = "tf_automation"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum update -y",
-      "sudo yum install -y java-11-openjdk-devel wget unzip",
-      "wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.2.1.78527.zip",
-      "unzip sonarqube-10.2.1.78527.zip",
-      "sudo mv sonarqube-10.2.1.78527 /opt/sonarqube",
-      "echo '[Unit]' | sudo tee /etc/systemd/system/sonarqube.service",
-      "echo 'Description=SonarQube service' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'After=syslog.target network.target' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo '' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo '[Service]' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'Type=forking' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'User=ec2-user' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'Restart=always' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo '' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo '[Install]' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "echo 'WantedBy=multi-user.target' | sudo tee -a /etc/systemd/system/sonarqube.service",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable sonarqube",
-      "sudo systemctl start sonarqube"
-    ]
-  }
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum update -y
+              sudo yum install -y java-11-openjdk-devel wget unzip
+              wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.2.1.78527.zip
+              unzip sonarqube-10.2.1.78527.zip
+              sudo mv sonarqube-10.2.1.78527 /opt/sonarqube
+              echo '[Unit]' | sudo tee /etc/systemd/system/sonarqube.service
+              echo 'Description=SonarQube service' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'After=syslog.target network.target' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo '' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo '[Service]' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'Type=forking' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'User=ec2-user' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'Restart=always' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo '' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo '[Install]' | sudo tee -a /etc/systemd/system/sonarqube.service
+              echo 'WantedBy=multi-user.target' | sudo tee -a /etc/systemd/system/sonarqube.service
+              sudo systemctl daemon-reload
+              sudo systemctl enable sonarqube
+              sudo systemctl start sonarqube
+              EOF
 }
 
 terraform {
