@@ -29,7 +29,7 @@ resource "aws_security_group" "sonarqube_sg" {
 }
 
 resource "aws_instance" "sonarqube_instance" {
-  ami           = "ami-08d5c2c27495d734a"  # Amazon Linux 2
+  ami           = var.ami_id
   instance_type = "t2.medium"
 
   key_name = "diego-aws" 
@@ -75,6 +75,12 @@ terraform {
 
 output "instance_id" {
   value = aws_instance.sonarqube_instance.id
+}
+
+variable "ami_id" {
+  description = "The AMI ID for the EC2 instance"
+  type        = string
+  default     = "ami-0d887a308369b6881" # Replace this with a valid default AMI ID if you have one
 }
 
 # resource "aws_ebs_volume" "extra_storage" {
