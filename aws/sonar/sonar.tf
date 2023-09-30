@@ -29,7 +29,7 @@ resource "aws_security_group" "sonarqube_sg" {
 }
 
 resource "aws_instance" "sonarqube_instance" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
+  ami           = "ami-08d5c2c27495d734a"  # Amazon Linux 2
   instance_type = "t2.medium"
 
   key_name = "diego-aws" 
