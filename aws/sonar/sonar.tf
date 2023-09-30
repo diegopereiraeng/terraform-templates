@@ -2,6 +2,12 @@ provider "aws" {
   region = "us-east-1" 
 }
 
+variable "ami_id" {
+  description = "The AMI ID for the EC2 instance"
+  type        = string
+  default     = "ami-0d887a308369b6881"
+}
+
 resource "aws_security_group" "sonarqube_sg" {
   name        = "sonarqube-sg"
   description = "Security Group for SonarQube"
@@ -75,12 +81,6 @@ terraform {
 
 output "instance_id" {
   value = aws_instance.sonarqube_instance.id
-}
-
-variable "ami_id" {
-  description = "The AMI ID for the EC2 instance"
-  type        = string
-  default     = "ami-0d887a308369b6881" # Replace this with a valid default AMI ID if you have one
 }
 
 # resource "aws_ebs_volume" "extra_storage" {
